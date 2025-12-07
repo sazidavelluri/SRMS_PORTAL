@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>SRMS - Admin Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .search-bar {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            padding: 12px 20px;
+            border-radius: var(--radius-sm);
+            color: white;
+            margin-bottom: 20px;
+            font-size: 1rem;
+        }
+
+        .search-bar:focus {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary);
+            outline: none;
+        }
+    </style>
+</head>
+
+<body onload="dataInit('admin')">
+    <div class="container">
+        <div class="glass-panel">
+            <div class="dashboard-header">
+                <div>
+                    <h3>Admin Portal</h3>
+                    <p>Manage students and support tickets</p>
+                </div>
+                <button onclick="localStorage.removeItem('srms_user'); window.location.href='index.html'"
+                    style="width: auto; margin:0; background:rgba(255,255,255,0.1);"
+                    class="secondary-btn">Logout</button>
+            </div>
+
+            <div class="grid-2">
+                <!-- Students Management -->
+                <div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                        <h4>Student Management</h4>
+                        <button onclick="openAddStudentModal()"
+                            style="width:auto; margin:0; padding:8px 16px; font-size:0.9rem;">+ Add New</button>
+                    </div>
+
+                    <input type="text" class="search-bar" placeholder="Search students..."
+                        onkeyup="filterStudents(this.value)">
+
+                    <div id="student-list" style="max-height: 400px; overflow-y: auto;">
+                        <div style="text-align:center; padding:2rem; color:var(--text-muted);">
+                            Loading students...
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tickets & Support -->
+                <div>
+                    <h4>Support Tickets</h4>
+                    <div id="ticket-list" style="max-height: 300px; overflow-y: auto; margin-bottom: 2rem;">
+                        <div style="text-align:center; padding:2rem; color:var(--text-muted);">
+                            Loading tickets...
+                        </div>
+                    </div>
+
+                    <h4>Admin Actions</h4>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                        <button class="secondary-btn" style="margin:0;">Global Announcement</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+
+    <!-- Add Student Modal -->
+    <div id="add-student-modal" class="modal-overlay">
+        <div class="modal-content glass-panel">
+            <h3>Add New Student</h3>
+            <form onsubmit="submitAddStudent(event)">
+                <input type="text" name="name" placeholder="Full Name" required>
+                <input type="text" name="roll" placeholder="Roll Number" required>
+
+                <div style="display:flex; gap:10px;">
+                    <input type="date" name="dob" required style="color:var(--text-light); opacity:1;"
+                        title="Date of Birth (Password)">
+                    <input type="tel" name="p_mobile" placeholder="Parent Mobile" required>
+                </div>
+
+                <div style="display:flex; gap:10px;">
+                    <select name="branch" required style="background: rgba(0,0,0,0.3);">
+                        <option value="" disabled selected>Select Branch</option>
+                        <option value="CSE">CSE</option>
+                        <option value="ECE">ECE</option>
+                        <option value="MEV">MEV</option>
+                    </select>
+                    <input type="text" name="section" placeholder="Section" required style="width:100px;">
+                </div>
+
+                <div style="display:flex; gap:10px;">
+                    <input type="number" name="fees" placeholder="Annual Tuition Fee (₹)" required>
+                    <input type="number" name="cgpa" placeholder="CGPA" step="0.01" min="0" max="10" required>
+                </div>
+
+                <div style="display:flex; gap:10px; margin-top:1rem;">
+                    <button type="button" class="secondary-btn"
+                        onclick="closeModal('add-student-modal')">Cancel</button>
+                    <button type="submit">Add Student</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Student Modal -->
+    <div id="edit-student-modal" class="modal-overlay">
+        <div class="modal-content glass-panel">
+            <h3>Edit Student</h3>
+            <form onsubmit="submitEditStudent(event)">
+                <input type="text" id="edit-roll" name="roll" placeholder="Roll Number" readonly
+                    style="opacity:0.7; cursor:not-allowed;">
+                <input type="text" id="edit-name" name="name" placeholder="Full Name" required>
+
+                <div style="display:flex; gap:10px;">
+                    <input type="date" id="edit-dob" name="dob" required style="color:var(--text-light); opacity:1;"
+                        title="Date of Birth (Password)">
+                    <input type="tel" id="edit-p_mobile" name="p_mobile" placeholder="Parent Mobile" required>
+                </div>
+
+                <div style="display:flex; gap:10px;">
+                    <select id="edit-branch" name="branch" required style="background: rgba(0,0,0,0.3);">
+                        <option value="" disabled>Select Branch</option>
+                        <option value="CSE">CSE</option>
+                        <option value="ECE">ECE</option>
+                        <option value="MEV">MEV</option>
+                    </select>
+                    <input type="text" id="edit-section" name="section" placeholder="Section" required
+                        style="width:100px;">
+                </div>
+
+                <div style="display:flex; gap:10px;">
+                    <input type="number" id="edit-fees" name="fees" placeholder="Annual Tuition Fee (₹)" required>
+                    <input type="number" id="edit-cgpa" name="cgpa" placeholder="CGPA" step="0.01" min="0" max="10"
+                        required>
+                </div>
+
+                <div style="display:flex; gap:10px; margin-top:1rem;">
+                    <button type="button" class="secondary-btn"
+                        onclick="closeModal('edit-student-modal')">Cancel</button>
+                    <button type="submit">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

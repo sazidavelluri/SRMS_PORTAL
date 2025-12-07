@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SRMS - Login</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .login-card {
+            width: 100%;
+            max-width: 440px;
+            margin: auto;
+            border-top: 1px solid rgba(102, 242, 132, 0.3);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .app-logo {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, #fff, var(--primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="glass-panel login-card">
+        <div class="app-logo">SRMS</div>
+        <p style="text-align: center; margin-bottom: 2rem;">Student Record Management System</p>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('student')">Student</button>
+            <button class="tab-btn" onclick="switchTab('parent')">Parent</button>
+            <button class="tab-btn" onclick="switchTab('admin')">Admin</button>
+        </div>
+
+        <!-- Student Login -->
+        <form id="student-form" onsubmit="handleLogin(event, 'student')" class="fade-in">
+            <input type="text" name="roll" placeholder="Roll Number (e.g. 101)" required>
+            <input type="password" name="pass" placeholder="Password (DOB: YYYY-MM-DD)" required>
+            <button type="submit">Login as Student</button>
+        </form>
+
+        <!-- Parent Login -->
+        <form id="parent-form" class="hidden fade-in" onsubmit="handleLogin(event, 'parent')">
+            <div
+                style="background:rgba(255,255,255,0.05); padding:1rem; border-radius:12px; margin-bottom:1rem; font-size:0.9rem; color:var(--text-muted);">
+                Login using your Registered Mobile and Child's DOB (YYYY-MM-DD).
+            </div>
+            <input type="tel" name="mobile" placeholder="Registered Mobile Number" required>
+            <input type="password" name="pass" placeholder="Password (Child's DOB)" required>
+            <button type="submit">Login as Parent</button>
+        </form>
+
+        <!-- Admin Login -->
+        <form id="admin-form" class="hidden fade-in" onsubmit="handleLogin(event, 'admin')" autocomplete="off">
+            <input type="text" name="id" placeholder="Admin ID" required>
+            <input type="password" name="pass" placeholder="Passcode" required>
+            <button type="submit">Access Admin Panel</button>
+        </form>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        function switchTab(role) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('form').forEach(f => f.classList.add('hidden'));
+
+            const btn = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.textContent.toLowerCase().includes(role));
+            if (btn) btn.classList.add('active');
+
+            const form = document.getElementById(role + '-form');
+            if (form) {
+                form.classList.remove('hidden');
+                // Trigger animation
+                form.style.opacity = '0';
+                form.style.transform = 'translateY(10px)';
+                requestAnimationFrame(() => {
+                    form.style.transition = 'all 0.3s ease';
+                    form.style.opacity = '1';
+                    form.style.transform = 'translateY(0)';
+                });
+            }
+        }
+    </script>
+</body>
+
+</html>

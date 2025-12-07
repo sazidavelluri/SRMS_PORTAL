@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>SRMS - Parent Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--primary), #3b82f6);
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+
+<body onload="dataInit('student')">
+    <div class="container">
+        <div class="glass-panel">
+            <div class="dashboard-header">
+                <div>
+                    <h3>Parent Portal</h3>
+                    <p>Viewing Child Details</p>
+                </div>
+                <button onclick="localStorage.removeItem('srms_user'); window.location.href='index.html'"
+                    style="width: auto; margin:0;" class="secondary-btn">Logout</button>
+            </div>
+
+            <div class="grid-2">
+                <!-- Left Column -->
+                <div>
+                    <div style="text-align:center; margin-bottom:2rem;">
+                        <div class="profile-avatar">P</div>
+                        <h2 id="display-name" style="margin-bottom: 0.5rem;">Child Profile</h2>
+                        <p>Manage fees and view academic progress</p>
+                    </div>
+
+                    <div class="glass-panel"
+                        style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);">
+                        <h4>Actions</h4>
+                        <button onclick="openPayFeeModal()" class="primary-btn">Pay Academic Fees</button>
+
+                        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 20px 0;">
+
+                        <h4>Support</h4>
+                        <div style="display:flex; gap:10px; margin-top:10px;">
+                            <button class="secondary-btn" style="margin:0;">Chat</button>
+                        </div>
+
+                        <form onsubmit="raiseTicket(event)" style="margin-top:20px;">
+                            <label
+                                style="font-size:0.9rem; color:var(--text-muted); margin-bottom:8px; display:block;">Raise
+                                an Issue</label>
+                            <textarea id="ticket-issue" style="height:100px; resize:none;"
+                                placeholder="Describe your concern..."></textarea>
+                            <button type="submit" style="margin-top:10px;">Submit Ticket</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Right Column: Academic & Personal Info -->
+                <div>
+                    <h4>Academic Performance</h4>
+                    <div id="attendance-display" style="margin-bottom:1.5rem;">
+                        <div
+                            style="background:rgba(255,255,255,0.05); padding:1rem; border-radius:12px; text-align:center;">
+                            Loading Attendance...
+                        </div>
+                    </div>
+
+                    <h4>Recent Results</h4>
+                    <div id="exam-results" style="margin-bottom:2rem;">
+                        <div
+                            style="background:rgba(255,255,255,0.05); padding:1rem; border-radius:12px; text-align:center;">
+                            Loading Results...
+                        </div>
+                    </div>
+
+                    <h4>Student Details</h4>
+                    <div id="details-grid" class="details-grid-loading">
+                        Loading personal details...
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div id="pay-fee-modal" class="modal-overlay">
+        <div class="modal-content glass-panel">
+            <h3>Fee Payment</h3>
+            <p style="margin-bottom:1.5rem;">Secure Payment Gateway Simulation</p>
+
+            <div id="fee-breakdown"
+                style="background:rgba(0,0,0,0.2); padding:1rem; border-radius:12px; margin-bottom:1.5rem;">
+                <!-- Populated by JS -->
+                <div style="text-align:center; color:var(--text-muted);">Calculating Fees...</div>
+            </div>
+
+            <form onsubmit="processPayment(event)">
+                <input type="text" placeholder="Card Number" required>
+                <div style="display:flex; gap:10px;">
+                    <input type="text" placeholder="MM / YY" required>
+                    <input type="password" placeholder="CVV" required>
+                </div>
+
+                <div style="display:flex; gap:10px; margin-top:1rem;">
+                    <button type="button" class="secondary-btn" onclick="closeModal('pay-fee-modal')">Cancel</button>
+                    <button id="pay-btn" type="submit">Secure Pay</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
